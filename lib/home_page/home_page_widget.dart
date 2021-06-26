@@ -1,3 +1,7 @@
+import '../auth/auth_util.dart';
+import '../backend/backend.dart';
+import '../chat/chat_widget.dart';
+import '../flutter_flow/chat/index.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
@@ -18,520 +22,126 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        backgroundColor: FlutterFlowTheme.tertiaryColor,
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: Text(
-          'Explore',
-          style: FlutterFlowTheme.title1.override(
+          'All Chats',
+          style: FlutterFlowTheme.bodyText1.override(
             fontFamily: 'Poppins',
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
-            child: Icon(
-              Icons.add_rounded,
-              color: FlutterFlowTheme.primaryColor,
-              size: 24,
-            ),
-          )
-        ],
-        centerTitle: false,
-        elevation: 2,
+        actions: [],
+        centerTitle: true,
+        elevation: 4,
       ),
-      backgroundColor: Color(0xFFF1F4F8),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 30),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(16, 12, 0, 12),
-                          child: Text(
-                            'This Week',
-                            style: FlutterFlowTheme.bodyText2.override(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        )
-                      ],
+      body: SafeArea(
+        child: StreamBuilder<List<ChatsRecord>>(
+          stream: queryChatsRecord(
+            queryBuilder: (chatsRecord) => chatsRecord
+                .where('users', arrayContains: currentUserReference)
+                .orderBy('last_message_time', descending: true),
+          ),
+          builder: (context, snapshot) {
+            // Customize what your widget looks like when it's loading.
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
+            List<ChatsRecord> listViewChatsRecordList = snapshot.data;
+            // Customize what your widget looks like with no query results.
+            if (snapshot.data.isEmpty) {
+              // return Container();
+              // For now, we'll just include some dummy data.
+              listViewChatsRecordList = createDummyChatsRecord(count: 4);
+            }
+            return Padding(
+              padding: EdgeInsets.fromLTRB(0, 2, 0, 0),
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                scrollDirection: Axis.vertical,
+                itemCount: listViewChatsRecordList.length,
+                itemBuilder: (context, listViewIndex) {
+                  final listViewChatsRecord =
+                      listViewChatsRecordList[listViewIndex];
+                  return StreamBuilder<List<ChatMessagesRecord>>(
+                    stream: queryChatMessagesRecord(
+                      singleRecord: true,
                     ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                            child: Card(
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              color: FlutterFlowTheme.tertiaryColor,
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                          child: Text(
-                                            'Fundraiser',
-                                            style: FlutterFlowTheme.bodyText2
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                              color:
-                                                  FlutterFlowTheme.primaryColor,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.85,
-                                    height: 1,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFDBE2E7),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                          child: Text(
-                                            'Charity 5K Race for a Cure',
-                                            style: FlutterFlowTheme.subtitle1
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Short description goes here and can be more\\nthan one line. Two lines is the best length… ',
-                                            style: FlutterFlowTheme.bodyText2
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 0, 0, 4),
-                                          child: Icon(
-                                            Icons.schedule,
-                                            color:
-                                                FlutterFlowTheme.primaryColor,
-                                            size: 20,
-                                          ),
+                    builder: (context, snapshot) {
+                      // Customize what your widget looks like when it's loading.
+                      if (!snapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      List<ChatMessagesRecord>
+                          chatPreviewChatMessagesRecordList = snapshot.data;
+                      // Customize what your widget looks like with no query results.
+                      if (snapshot.data.isEmpty) {
+                        // return Container();
+                        // For now, we'll just include some dummy data.
+                        chatPreviewChatMessagesRecordList =
+                            createDummyChatMessagesRecord(count: 1);
+                      }
+                      final chatPreviewChatMessagesRecord =
+                          chatPreviewChatMessagesRecordList.first;
+                      return FutureBuilder<UsersRecord>(
+                        future: () async {
+                          final chatUserRef = FFChatManager.instance
+                              .getChatUserRef(
+                                  currentUserReference, listViewChatsRecord);
+                          return UsersRecord.getDocument(chatUserRef).first;
+                        }(),
+                        builder: (context, snapshot) {
+                          final chatUser = snapshot.data;
+                          return FFChatPreview(
+                            onTap: chatUser != null
+                                ? () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChatWidget(
+                                          chatUser: chatUser,
                                         ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(4, 0, 0, 0),
-                                          child: Text(
-                                            '8:00am',
-                                            style: FlutterFlowTheme.bodyText1
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                              color:
-                                                  FlutterFlowTheme.primaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(24, 0, 0, 4),
-                                          child: Icon(
-                                            Icons.location_on_sharp,
-                                            color:
-                                                FlutterFlowTheme.primaryColor,
-                                            size: 20,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(4, 0, 0, 0),
-                                          child: Text(
-                                            'Alamodome, San Antonio...',
-                                            style: FlutterFlowTheme.bodyText1
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                              color:
-                                                  FlutterFlowTheme.primaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
+                                      ),
+                                    )
+                                : null,
+                            lastChatText: listViewChatsRecord.lastMessage,
+                            lastChatTime: listViewChatsRecord.lastMessageTime,
+                            seen: listViewChatsRecord.lastMessageSeenBy
+                                .contains(currentUserReference),
+                            userName: chatUser?.displayName ?? '',
+                            userProfilePic: chatUser?.photoUrl ?? '',
+                            color: Color(0xFFEEF0F5),
+                            unreadColor: Colors.blue,
+                            titleTextStyle: GoogleFonts.getFont(
+                              'DM Sans',
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                            child: Card(
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              color: FlutterFlowTheme.tertiaryColor,
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Image.asset(
-                                    'assets/images/card_header@2x.png',
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 120,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                          child: Text(
-                                            'Fundraiser',
-                                            style: FlutterFlowTheme.bodyText2
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                              color:
-                                                  FlutterFlowTheme.primaryColor,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.85,
-                                    height: 1,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFDBE2E7),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                          child: Text(
-                                            'Charity 5K Race for a Cure',
-                                            style: FlutterFlowTheme.subtitle1
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Short description goes here and can be more\\nthan one line. Two lines is the best length… ',
-                                            style: FlutterFlowTheme.bodyText2
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 0, 0, 4),
-                                          child: Icon(
-                                            Icons.schedule,
-                                            color:
-                                                FlutterFlowTheme.primaryColor,
-                                            size: 20,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(4, 0, 0, 0),
-                                          child: Text(
-                                            '8:00am',
-                                            style: FlutterFlowTheme.bodyText1
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                              color:
-                                                  FlutterFlowTheme.primaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(24, 0, 0, 4),
-                                          child: Icon(
-                                            Icons.location_on_sharp,
-                                            color:
-                                                FlutterFlowTheme.primaryColor,
-                                            size: 20,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(4, 0, 0, 0),
-                                          child: Text(
-                                            'Alamodome, San Antonio...',
-                                            style: FlutterFlowTheme.bodyText1
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                              color:
-                                                  FlutterFlowTheme.primaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
+                            dateTextStyle: GoogleFonts.getFont(
+                              'DM Sans',
+                              color: Color(0x73000000),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 14,
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(16, 12, 0, 12),
-                          child: Text(
-                            'Next Week',
-                            style: FlutterFlowTheme.bodyText2.override(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
+                            previewTextStyle: GoogleFonts.getFont(
+                              'DM Sans',
+                              color: Color(0x73000000),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 14,
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                            child: Card(
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              color: FlutterFlowTheme.tertiaryColor,
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Image.asset(
-                                    'assets/images/card_header@2x.png',
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 120,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                          child: Text(
-                                            'Fundraiser',
-                                            style: FlutterFlowTheme.bodyText2
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                              color:
-                                                  FlutterFlowTheme.primaryColor,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.85,
-                                    height: 1,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFDBE2E7),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                          child: Text(
-                                            'Charity 5K Race for a Cure',
-                                            style: FlutterFlowTheme.subtitle1
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Short description goes here and can be more\\nthan one line. Two lines is the best length… ',
-                                            style: FlutterFlowTheme.bodyText2
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 0, 0, 4),
-                                          child: Icon(
-                                            Icons.schedule,
-                                            color:
-                                                FlutterFlowTheme.primaryColor,
-                                            size: 20,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(4, 0, 0, 0),
-                                          child: Text(
-                                            '8:00am',
-                                            style: FlutterFlowTheme.bodyText1
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                              color:
-                                                  FlutterFlowTheme.primaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(24, 0, 0, 4),
-                                          child: Icon(
-                                            Icons.location_on_sharp,
-                                            color:
-                                                FlutterFlowTheme.primaryColor,
-                                            size: 20,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(4, 0, 0, 0),
-                                          child: Text(
-                                            'Alamodome, San Antonio...',
-                                            style: FlutterFlowTheme.bodyText1
-                                                .override(
-                                              fontFamily: 'Poppins',
-                                              color:
-                                                  FlutterFlowTheme.primaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
+                            contentPadding: EdgeInsets.fromLTRB(3, 3, 3, 3),
+                            borderRadius: BorderRadius.circular(0),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
               ),
-            )
-          ],
+            );
+          },
         ),
       ),
     );
